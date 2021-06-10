@@ -52,6 +52,13 @@
 				"desc": "过滤试用数量高于此数量的商品"
 			},
 			{
+				"id": "apply_interval",
+				"name": "试用商品间隔",
+				"val": 5000,
+				"type": "number",
+				"desc": "申请试用商品的间隔时间，单位：毫秒"
+			},
+			{
 				"id": "jd_cids",
 				"name": "商品类型",
 				"val": "",
