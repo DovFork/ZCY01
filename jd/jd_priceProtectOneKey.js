@@ -37,7 +37,7 @@ const isRequest = typeof $request != "undefined"
     else {
         $.body = $.getdata('siteppM_skuOnceApply')
         $.cookie = $.getdata("priceCookie")
-        if (!$.body || $.cookie) {
+        if (!$.body || !$.cookie) {
             $.msg(`${$.name}`, "请先获取一键价保body，进入JD APP一键价保获取！", ``)
             return
         }
