@@ -13,10 +13,6 @@ const $ = new Env('X东价格保护');
 const selfDomain = 'https://msitepp-fm.jd.com/';
 const unifiedGatewayName = 'https://api.m.jd.com/';
 
-let args = {
-    goodFilters: "".split('@')
-}
-
 !(async () => {
     await requireConfig()
     if (!$.cookiesArr[0]) {
@@ -110,17 +106,6 @@ function requireConfig() {
             $.cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
         }
         console.log(`共${$.cookiesArr.length}个X东账号\n`)
-
-        if ($.isNode()) {
-            if (process.env.JD_PRICE_PROTECT_GOOD_FILTERS) {
-                args.goodFilters = process.env.JD_PRICE_PROTECT_GOOD_FILTERS.split('@')
-            }
-        }
-        else if ($.isQuanX()) {
-            if ($.getdata('jdPriceProtectGoodFilters')) {
-                args.goodFilters = $.getdata('jdPriceProtectGoodFilters').split('@')
-            }
-        }
 
         resolve()
     })
@@ -219,12 +204,6 @@ function getApplyData(page) {
                             let id = `skuprice_${item.orderId}_${item.skuId}_${item.sequence}`
                             let reg = new RegExp(`${id}.*?isfujian="(.*?)"`)
                             let del = data.match(reg)[1] == 'true' // is fujian
-
-                            args.goodFilters.forEach(name => {
-                                if (titles[i][1].indexOf(name) != -1) {
-                                    del = true
-                                }
-                            })
 
                             if (!del) {
                                 let skuRefundTypeDiv_orderId = `skuRefundTypeDiv_${item.orderId}`
@@ -382,7 +361,7 @@ function taskurl(functionid, body) {
             "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1",
             "Cookie": $.cookie
         },
-        "body": body ? `body=${JSON.stringify(body)}` : undefined
+        "body": body ? `body=${encodeURIComponent(JSON.stringify(body))}` : undefined
     }
 }
 
