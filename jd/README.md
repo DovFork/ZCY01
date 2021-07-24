@@ -7,7 +7,7 @@
 token的获取方式：
 
 1. 运行 token.html，未必有用
-2. qx 配置抓token
+2. qx 配置抓token，可以抓[网页]([价格保护 (jd.com)](https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu))以及APP，刷新获取一个Token
 
 >[rewrite_local]
 >https:\/\/api\.m.jd.com\/api\?appid=siteppM&functionId=siteppM_priceskusPull url script-request-body https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtectRewrite.js
