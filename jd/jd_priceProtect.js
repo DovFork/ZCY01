@@ -3,24 +3,32 @@ update 2021/6/14
 京东价格保护：脚本更新地址 https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtect.js
 脚本兼容: QuantumultX, Node.js
 ==========================Quantumultx=========================
+打开手机客户端，或者浏览器访问 https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu
+
+[rewrite_local]
+https:\/\/api\.m.jd.com\/api\?appid=siteppM&functionId=siteppM_priceskusPull url script-request-body https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtectRewrite.js
+
 [task_local]
 # 京东价格保护
 5 0 * * * https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtect.js, tag=京东价格保护, img-url=https://raw.githubusercontent.com/ZCY01/img/master/pricev1.png, enabled=true
 */
 
-const $ = new Env('X东价格保护');
+const $ = new Env('X东价格保护')
 
-const selfDomain = 'https://msitepp-fm.jd.com/';
-const unifiedGatewayName = 'https://api.m.jd.com/';
+const selfDomain = 'https://msitepp-fm.jd.com/'
+const unifiedGatewayName = 'https://api.m.jd.com/'
+
+let tokens = ''
 
 !(async () => {
     await requireConfig()
-    if (!$.cookiesArr[0]) {
-        $.msg($.name, '【提示】请先获取X东账号一cookie\n直接使用NobyDa的X东签到获取', 'https://bean.m.jd.com/', {
-            "open-url": "https://bean.m.jd.com/"
-        })
-        return
-    }
+    // if (!$.tokenList[0]) {
+    //     $.msg($.name, '请先获取JD_TOKEN', 'https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu', {
+    //         "open-url": "https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu"
+    //     })
+    //     return
+    // }
+
     for (let i = 0; i < $.cookiesArr.length; i++) {
         if ($.cookiesArr[i]) {
             $.cookie = $.cookiesArr[i]
@@ -43,9 +51,8 @@ const unifiedGatewayName = 'https://api.m.jd.com/';
             $.orderList = new Array()
             $.applyMap = {}
 
-            // TODO
-            $.token = ''
-            $.feSt = 'f'
+            $.token = $.tokenList.length >= i ? $.tokenList[i] : ($.token || '')
+            $.feSt = $.token ? 's' : 'f'
 
             console.log(`💥 获得首页面，解析超参数`)
             await getHyperParams()
@@ -55,7 +62,6 @@ const unifiedGatewayName = 'https://api.m.jd.com/';
             for (let page = 1; $.hasNext; page++) {
                 await getApplyData(page)
             }
-            return
 
             console.log(`🗑 删除不符合订单`)
             let taskList = []
@@ -106,7 +112,13 @@ function requireConfig() {
             $.cookiesArr = [$.getdata('CookieJD'), $.getdata('CookieJD2'), ...jsonParse($.getdata('CookiesJD') || "[]").map(item => item.cookie)].filter(item => !!item);
         }
         console.log(`共${$.cookiesArr.length}个X东账号\n`)
-
+        if ($.isNode) {
+            if (process.env.JD_TOKENS) tokens = process.env.JD_TOKENS
+        }
+        else {
+            tokens = $.getdata('jd_token') || tokens
+        }
+        $.tokenList = tokens.split('@')
         resolve()
     })
 }
