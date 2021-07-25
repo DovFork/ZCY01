@@ -160,7 +160,7 @@
 		{
 			"id": "JD_PRICE_PROTECT",
 			"name": "X东价格保护",
-			"keys": [],
+			"keys": ["jd_tokens"],
 			"settings": [
 				{
 					"id": "jdPriceProtectNotify",
@@ -170,8 +170,8 @@
 					"desc": "运行X东价格保护脚本时不发出系统弹窗通知"
 				},
 				{
-					"id": "jdPriceProtectGoodFilters",
-					"name": "过滤",
+					"id": "jd_tokens",
+					"name": "京东token列表",
 					"val": "",
 					"type": "text",
 					"desc": "商品过滤器，以@间隔分开，剔除包含规则的商品"

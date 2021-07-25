@@ -18,15 +18,15 @@ const $ = new Env('京东价格保护');
         const body = $request.body
         let data = JSON.parse(decodeURIComponent(body).slice(5))
         let token = data.token
-        let old = $.getdata('jd_token')
+        let old = $.getdata('jd_tokens')
         if (token && old) {
             if (old.indexOf(token) == -1) {
-                $.setdata(`${old}@${token}`, 'jd_token')
-                $.msg(`${$.name}`, `写入token成功，当前${$.getdata('jd_token').split('@').length}个token`, ``)
+                $.setdata(`${old}@${token}`, 'jd_tokens')
+                $.msg(`${$.name}`, `写入token成功，当前${$.getdata('jd_tokens').split('@').length}个token`, ``)
             }
         }
         else if (token) {
-            $.setdata(token, 'jd_token')
+            $.setdata(token, 'jd_tokens')
             $.msg(`${$.name}`, `写入首个token成功`, ``)
         }
 
