@@ -100,7 +100,7 @@ function requireConfig() {
         }
         console.log(`共${$.cookiesArr.length}个X东账号\n`)
 
-        if ($.isNode) {
+        if ($.isNode()) {
             if (process.env.JD_TOKENS) tokens = process.env.JD_TOKENS
         }
         else {
