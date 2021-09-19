@@ -11,6 +11,10 @@ https:\/\/api\.m.jd.com\/api\?appid=siteppM&functionId=siteppM_priceskusPull url
 [task_local]
 # 京东价格保护
 5 0 * * * https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtect.js, tag=京东价格保护, img-url=https://raw.githubusercontent.com/ZCY01/img/master/pricev1.png, enabled=true
+
+==========================Node=========================
+Node 用户安装 jsdom 即可，如缺少其他依赖自行安装
+在 scripts 目录下：npm install jsdom
 */
 
 const $ = new Env('京东价格保护');
@@ -18,8 +22,8 @@ const $ = new Env('京东价格保护');
 const unifiedGatewayName = 'https://api.m.jd.com'
 
 // 请先配置 token!!!最好抓APP的！
-let tokens = ''
-
+let tokens = '' // @ 分隔
+$.tokenList = []
 $.HyperParam = {
     sid_hid: '',
     type_hid: '3',
@@ -27,12 +31,12 @@ $.HyperParam = {
 }
 !(async () => {
     await requireConfig()
-    // if (!$.tokenList[0]) {
-    //     $.msg($.name, '请先获取JD_TOKEN', 'https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu', {
-    //         "open-url": "https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu"
-    //     })
-    //     return
-    // }
+    if (!$.tokenList[0]) {
+        $.msg($.name, '请先获取JD_TOKEN', 'https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu', {
+            "open-url": "https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu"
+        })
+        return
+    }
     for (let i = 0; i < $.cookiesArr.length; i++) {
         if ($.cookiesArr[i]) {
             $.cookie = $.cookiesArr[i]
@@ -55,6 +59,8 @@ $.HyperParam = {
             $.feSt = $.token ? 's' : 'f'
 
             $.applied = false
+            console.log($.token)
+            continue
             await onceApply()
             if ($.applied) {
                 await checkOnceAppliedResult()
@@ -80,7 +86,7 @@ function requireConfig() {
             }
         }
     }
-    return new Promise(resolve => {
+    return new Promise(async (resolve, reject) => {
         console.log('开始获取配置文件\n')
         $.notify = $.isNode() ? require('./sendNotify') : { sendNotify: async () => { } }
         //获取 Cookies
@@ -101,12 +107,21 @@ function requireConfig() {
         console.log(`共${$.cookiesArr.length}个X东账号\n`)
 
         if ($.isNode()) {
-            if (process.env.JD_TOKENS) tokens = process.env.JD_TOKENS
+            for(let i=0;i<$.cookiesArr.length;i++){
+                let token = await jstoken()
+                if(token) {
+                    $.tokenList.push(token)
+                }
+                else {
+                    reject('gen token fail')
+                }
+            }
+            console.log(`token length:${$.tokenList.length}`)
         }
         else {
             tokens = $.getdata('jd_tokens') || tokens
+            $.tokenList = tokens.split('@')
         }
-        $.tokenList = tokens.split('@')
         resolve()
     })
 }
@@ -172,6 +187,39 @@ function checkOnceAppliedResult() {
             }
         })
     })
+}
+
+async function jstoken() {
+    let jsdom = require("jsdom");
+    const { JSDOM } = jsdom;
+    let resourceLoader = new jsdom.ResourceLoader({
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0',
+        referrer: "https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu?sid=0b5a9d5564059f36ed16a8967c37e24w",
+    });
+    let virtualConsole = new jsdom.VirtualConsole();
+    var options = {
+        referrer: "https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu?sid=0b5a9d5564059f36ed16a8967c37e24w",
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:91.0) Gecko/20100101 Firefox/91.0',
+        runScripts: "dangerously",
+        resources: resourceLoader,
+        //  cookieJar,
+        includeNodeLocations: true,
+        storageQuota: 10000000,
+        pretendToBeVisual: true,
+        virtualConsole
+    };
+    dom = new JSDOM(`<body><script src="https://js-nocaptcha.jd.com/statics/js/main.min.js"></script></body>`, options);
+    await $.wait(1000)
+    try {
+        feSt = 's'
+        jab = new dom.window.JAB({
+            bizId: 'jdjiabao',
+            initCaptcha: false
+        })
+        return jab.getToken()
+    } catch (e) { 
+        return undefined
+    }
 }
 
 function totalBean() {
