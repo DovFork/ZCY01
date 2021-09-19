@@ -1,5 +1,5 @@
 /*
-update 2021/4/11
+update 2021/9/19
 
 京东价格保护：脚本更新地址 https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtect.js
 脚本兼容: QuantumultX, Node.js
@@ -21,7 +21,7 @@ const $ = new Env('京东价格保护');
         let old = $.getdata('jd_tokens')
         if (token && old) {
             if (old.indexOf(token) == -1) {
-                $.setdata(`${old}@${token}`, 'jd_tokens')
+                $.setdata(`${token}@${old}`, 'jd_tokens')
                 $.msg(`${$.name}`, `写入token成功，当前${$.getdata('jd_tokens').split('@').length}个token`, ``)
             }
         }
@@ -29,8 +29,6 @@ const $ = new Env('京东价格保护');
             $.setdata(token, 'jd_tokens')
             $.msg(`${$.name}`, `写入首个token成功`, ``)
         }
-
-
     }
 })()
     .catch((e) => {

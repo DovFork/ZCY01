@@ -11,7 +11,7 @@ npm install jsdom
 
 token的获取方式：
 
-2. qx 配置抓token，可以抓网页:[价格保护](https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu)或者APP，刷新一次获取一个Token
+qx 配置抓token，可以抓网页:[价格保护](https://msitepp-fm.jd.com/rest/priceprophone/priceProPhoneMenu)或者APP，刷新一次获取一个Token
 
 ```
 [rewrite_local]
