@@ -60,8 +60,6 @@ $.HyperParam = {
             $.feSt = $.token ? 's' : 'f'
 
             $.applied = false
-            console.log($.token)
-            continue
             await onceApply()
             if ($.applied) {
                 await checkOnceAppliedResult()
