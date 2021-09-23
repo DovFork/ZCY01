@@ -15,5 +15,5 @@ qx 配置抓token，可以抓网页:[价格保护](https://msitepp-fm.jd.com/res
 
 ```
 [rewrite_local]
-https:\/\/api\.m.jd.com\/api\?appid=siteppM&functionId=siteppM_priceskusPull url script-request-body https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtectRewrite.js
+https:\/\/api\.m\.jd\.com\/api\?appid=siteppM&functionId=siteppM_priceskusPull url script-request-body https://raw.githubusercontent.com/ZCY01/daily_scripts/main/jd/jd_priceProtectRewrite.js
 ```
